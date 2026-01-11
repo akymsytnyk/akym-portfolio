@@ -1,0 +1,41 @@
+/* mobile-menu-extra.css
+   Minimal additions:
+   - Close overlay on link click (JS adds behavior)
+   - Hide duplicate HOME link in the collapse for >=768px
+   - Hide burger while the Library overlay (#lib) is open on mobile
+*/
+
+@media (min-width: 768px){
+  /* HOME already exists in header; hide the extra one inside the collapsed menu */
+  body header .navbar-collapse .nav-home-in-menu{
+    display: none !important;
+  }
+}
+
+/* When Library is open on mobile, the burger should not be visible */
+@media (max-width: 767.98px){
+  /* JS fallback */
+  body.lib-open header .navbar-toggler{
+    display: none !important;
+  }
+
+  /* Pure-CSS path for modern browsers */
+  body:has(#lib:target) header .navbar-toggler{
+    display: none !important;
+  }
+
+  /* Allow the Library close (X) to be clickable: the header was sitting above the library overlay */
+  body.lib-open header{
+    pointer-events: none;
+  }
+
+
+  /* Hide HOME (top-left) while Library overlay is open */
+  body.lib-open header .container-fluid > a.nav-link.p-0{
+    visibility: hidden !important;
+  }
+  body:has(#lib:target) header .container-fluid > a.nav-link.p-0{
+    visibility: hidden !important;
+  }
+
+}

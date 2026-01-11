@@ -1,0 +1,25 @@
+{
+  "name": "akym-portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "sass src/scss:public/css --style=expanded",
+    "watch:css": "sass --watch src/scss:public/css --style=expanded --no-source-map"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/D1SDY/akym-portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/D1SDY/akym-portfolio/issues"
+  },
+  "homepage": "https://github.com/D1SDY/akym-portfolio#readme",
+  "devDependencies": {
+    "sass": "^1.92.1"
+  }
+}

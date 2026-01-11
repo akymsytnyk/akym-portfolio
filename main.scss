@@ -1,0 +1,813 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+.no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+* {
+    cursor: default;
+}
+
+a,
+button {
+    cursor: pointer;
+}
+
+body {
+    .page {
+        overflow-x: hidden;
+        color: #fff;
+        background: #434343;
+        position: relative;
+        z-index: 0;
+
+        &::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+
+            background: #434343 url("../img/background.jpg") no-repeat left center;
+            // Keep the photo proportional across many aspect ratios (no squeezing)
+            background-size: auto 120.19vh;
+            transform-origin: left center;
+            transform: translate3d(0, 0, 0) scale(1);
+            transition:
+                transform 1.05s cubic-bezier(.2, .7, .2, 1),
+                background-size 1.05s cubic-bezier(.2, .7, .2, 1),
+                background-position 1.05s cubic-bezier(.2, .7, .2, 1);
+            will-change: transform, background-size, background-position;
+        }
+    }
+
+    header {
+        padding: 3.89vh 3.75vw !important;
+        font-weight: 900 !important;
+        font-size: 2.083vh !important;
+        line-height: 1.03;
+        letter-spacing: 0;
+        font-family: "Roboto", sans-serif;
+
+        .navbar-toggler {
+            border-color: #fff;
+
+            .navbar-toggler-icon {
+                color: #fff;
+            }
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+    }
+
+    h1 {
+        margin: 0;
+        font-family: "roc-grotesk-condensed", sans-serif;
+        font-weight: 500;
+        font-style: normal;
+        font-size: 11.98vw;
+        line-height: 0.73;
+    }
+
+    .home-row {
+        margin: 0 5.42vw 8.15vh 4.27vw;
+
+        gap: 6.25vw;
+
+        .about {
+            max-width: 20.83vw;
+            font-weight: 400;
+            font-size: 2.22vh;
+            line-height: 1.03;
+            letter-spacing: 0;
+            font-family: "Roboto", sans-serif;
+        }
+
+        .social {
+            ul {
+                img {
+                    width: 1.82vw;
+                    aspect-ratio: 1 / 1;
+                }
+
+                padding: 0;
+                margin: 0;
+                display: flex;
+                gap: 2.96vh;
+                list-style: none;
+                flex-direction: column;
+            }
+        }
+    }
+
+    .library {
+        position: fixed;
+        inset: 0;
+        padding: 0 0 7.87vh 4.64vw;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(6%);
+        transition: opacity .45s ease, transform .6s ease;
+        background: #434343;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-width: 100vw;
+        max-height: 100dvh;
+
+        .col-1 {
+            padding: 0;
+        }
+
+
+        .lib-title {
+            margin: 0;
+            line-height: 1.03;
+            font: 500 21.3vh/.9 "roc-grotesk-condensed", sans-serif;
+            transform-origin: 65% 0%;
+            transform: translateY(-100vh) scale(.25);
+            transition: transform .8s cubic-bezier(.2, .7, .2, 1), transform-origin .8s cubic-bezier(.2, .7, .2, 1);
+            transform-box: border-box;
+        }
+
+        .tracks {
+            margin-top: 8.15vh;
+
+            li {
+                @for $i from 1 through 5 {
+                    &:nth-child(#{$i}) {
+                        transition-delay: .15s + ($i - 1) * .10s;
+                    }
+                }
+            }
+
+            .track {
+                gap: 4.63vh;
+                color: #fff;
+                font-size: 2.22vh;
+                font-weight: 900;
+                line-height: 1.03;
+                font-family: "Roboto", sans-serif;
+                margin: 3.80vh 0;
+
+                &.is-playing .icon::after {
+                    inset: 0;
+                    display: grid;
+                    place-items: center;
+                    content: "❚❚";
+                    opacity: .85;
+                    transform: scale(1);
+                }
+
+                .icon {
+                    position: relative;
+
+                    &::after {
+                        content: "▶";
+                        position: absolute;
+                        inset: 0;
+                        display: grid;
+                        place-items: center;
+                        font-size: 1.48vh;
+                        line-height: 1;
+                        opacity: 0;
+                        transform: scale(0.9);
+                        transition: opacity .25s ease, transform .25s ease;
+                        will-change: opacity, transform;
+                        pointer-events: none;
+                    }
+
+                    &:hover::after {
+                        opacity: .85;
+                        transform: scale(1);
+                    }
+
+                    & img {
+                        width: 2.08vw;
+                        aspect-ratio: 1 / 1;
+                        cursor: pointer;
+                        position: relative;
+                        display: inline-block;
+                    }
+                }
+
+                &:first-child {
+                    margin-top: 0;
+                }
+            }
+
+            & audio {
+                display: none !important;
+
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 42px;
+            right: 42px;
+
+            img {
+                width: 4.44vmin;
+                aspect-ratio: 1 / 1;
+            }
+        }
+
+        .waveform {
+            width: 100%;
+            height: 3.24vh;
+            display: block;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .tracks .track .icon::after {
+                transition: none;
+            }
+        }
+
+    }
+
+    .library:target {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+
+        .lib-title {
+            transform: translateY(0) scale(1);
+        }
+
+        .tracks li {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .biography {
+        display: none;
+    }
+
+    .home {
+        display: none;
+    }
+
+}
+
+#about:target~.page {
+    background: #434343;
+
+    &::before {
+        // Keep the photo proportional across many aspect ratios (no squeezing)
+        background-position: left center;
+
+        @media (min-width: 768px) {
+            transform: translate3d(0, 0, 0) scale(0.55);
+        }
+    }
+
+    .biography {
+        flex: 1;
+        display: flex;
+        padding-left: 4.3vw;
+
+        .row {
+            gap: 15vw;
+
+            .col {
+                padding: 0 0 15.78vh 0;
+
+                .bio-text {
+                    max-width: 16.67vw;
+                    padding-top: 11.94vh;
+                    font-weight: 400;
+                    font-size: 2.22vh;
+                    line-height: 1.03;
+                }
+
+                .contact {
+                    font-family: "Roboto", sans-serif;
+
+                    gap: 2.04vh;
+
+                    h2 {
+                        font-size: 2.96vh;
+                        padding-bottom: 0.46vh;
+                        font-weight: 500;
+                        padding: 0 0 0.44vh 0;
+                        margin: 0;
+                        line-height: 0.8;
+                    }
+
+
+                    .contact-row {
+                        display: flex;
+                        align-items: center;
+                        gap: 2.69vh;
+                        font-weight: 400;
+                        font-size: 1.48vh;
+                        line-height: 1.03;
+                        letter-spacing: 0;
+
+                        img {
+                            width: 0.94vw;
+                            aspect-ratio: 1 / 1;
+                        }
+
+                        p {
+                            margin: 0;
+                        }
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    @media (max-width: 955px) {
+        .biography {
+            .row {
+                .col {
+                    padding: 0 0 0 1rem;
+
+                    h1 {
+                        padding: 0;
+                    }
+
+
+                    .bio-text {
+                        padding: 0;
+                    }
+                }
+            }
+        }
+    }
+
+    .home-row {
+        display: none;
+    }
+}
+
+/* --- Responsive tweaks (minimal-change) --- */
+@media (max-width: 767.98px) {
+    /* Keep the hero photo cropped (not stretched) on small screens */
+    body .page::before {
+        background-size: cover;
+        background-position: 22% 18%;
+    }
+
+    #about:target ~ .page::before {
+        background-size: cover;
+        background-position: 22% 18%;
+    }
+
+    header {
+        padding: 16px 16px !important;
+        font-size: 16px !important;
+    }
+
+    .home-row {
+        margin: 0 24px 48px 24px;
+        gap: 24px;
+        flex-direction: column;
+        align-items: flex-start !important;
+
+        .about {
+            max-width: 100%;
+            font-size: 16px;
+            /* Align the subtitle with the AKYM/SYTNYK headline (mobile only) */
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        /* Mobile: remove forced line breaks so the subtitle can use the full width */
+        .about br {
+            display: none;
+        }
+
+        .social {
+            text-align: left !important;
+
+            ul {
+                flex-direction: row;
+                gap: 16px;
+
+                img {
+                    width: clamp(20px, 6vw, 28px);
+                }
+            }
+        }
+    }
+
+    .library {
+        padding: 0 16px 32px 16px;
+
+        /* Neutralize Bootstrap row negative margins inside the overlay on mobile */
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .tracks {
+            margin-top: 32px;
+            padding-left: 0;
+
+            .track {
+                gap: 16px;
+                margin: 16px 0;
+                font-size: 16px;
+
+                .icon img {
+                    width: clamp(28px, 8vw, 44px);
+                }
+            }
+        }
+
+        .close-btn {
+            top: 16px;
+            right: 16px;
+
+            img {
+                width: 28px;
+            }
+        }
+
+        .waveform {
+            height: 40px;
+        }
+    }
+}
+
+@media (max-width: 479.98px) {
+    /* Slightly re-center the crop on very small screens */
+    body .page::before,
+    #about:target ~ .page::before {
+        background-position: 20% 16%;
+    }
+
+    header {
+        padding: 12px 12px !important;
+    }
+
+    .home-row {
+        margin: 0 12px 40px 12px;
+    }
+
+    .library {
+        padding: 0 12px 24px 12px;
+    }
+}
+// STEP 5: Mid view (tablet / small desktop) — make the subtitle wider and avoid awkward wrapping
+@media (min-width: 768px) and (max-width: 991.98px){
+  body{
+    .home-row{
+      flex-direction: row;
+      align-items: flex-end !important;
+
+      .about{
+        max-width: none;
+
+        br{
+          display: none;
+        }
+      }
+
+      .social{
+        align-self: flex-end;
+      }
+    }
+  }
+}
+
+/* ABOUT: only the text block above Contact scrolls */
+  /* Lock the page so menu/BIOGRAPHY/Contact never move */
+  #about:target ~ .page{
+    height: 100dvh;
+    height: 100vh;
+    overflow: hidden;
+  }
+  #about:target ~ .page main{
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  #about:target ~ .page .biography{
+    min-height: 0;
+    overflow: hidden;
+  }
+  #about:target ~ .page .biography .row{
+    height: 100%;
+    min-height: 0;
+  }
+  #about:target ~ .page .biography .row .col{
+    min-height: 0;
+  }
+
+  /* Right column: only bio-text scrolls, contact stays pinned */
+  #about:target ~ .page .biography .row .col:last-child{
+    justify-content: flex-start !important;
+    min-height: 0;
+  }
+  #about:target ~ .page .biography .row .col:last-child .bio-text{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.75rem;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  #about:target ~ .page .biography .row .col:last-child .contact{
+    margin-top: auto;
+  }
+
+  /* Readable formatting (no bigger/bolder font) */
+  #about:target ~ .page .biography .bio-text p{
+    margin: 0 0 1.15em 0;
+  }
+  #about:target ~ .page .biography .bio-text .bio-h{
+    margin: 0 0 0.75em 0;
+    font-weight: 400;
+  }
+  #about:target ~ .page .biography .bio-text .bio-section{
+    margin: 0 0 1.1em 0;
+  }
+  #about:target ~ .page .biography .bio-text ul.bio-list{
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.9em 0;
+  }
+  #about:target ~ .page .biography .bio-text ul.bio-list li{
+    margin: 0 0 0.65em 0;
+    padding-left: 1.1em;
+    position: relative;
+  }
+  #about:target ~ .page .biography .bio-text ul.bio-list li::before{
+    content: "—";
+    position: absolute;
+    left: 0;
+  }
+/* STEP 3E: ABOUT desktop widen bio text */
+@media (min-width: 992px) {
+  /* Give the right side some breathing room so text doesn't hit the edge */
+  #about:target ~ .page .biography {
+    padding-right: 4.3vw;
+  }
+
+  /* Make lines longer (wider text block), but still capped */
+  #about:target ~ .page .biography .row .col:last-child .bio-text {
+    max-width: clamp(420px, 30vw, 760px);
+  }
+}
+
+/* STEP 3I: ABOUT windowed bio scroll aligned with photo */
+@media (min-width: 992px) {
+  /* Keep the right column stable */
+  #about:target ~ .page .biography .row .col:last-child {
+    justify-content: flex-start !important;
+  }
+
+  /* The red-frame window: same vertical span as the photo strip */
+  #about:target ~ .page .biography .row .col:last-child .bio-text {
+    flex: 0 0 auto;
+    height: 54.97vh;
+    padding-top: 0 !important;   /* remove inner offset */
+    margin-top: 11.94vh;         /* preserve the original text start position */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.75rem;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Contact stays below the window and does not move while scrolling the bio */
+  #about:target ~ .page .biography .row .col:last-child .contact {
+    margin-top: 2.5vh;
+  }
+}
+
+/* STEP 3J: ABOUT windowed bio scroll for mid widths */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  /* Match desktop behavior: fixed-height scroll window aligned with the photo strip */
+  #about:target ~ .page .biography .row .col:last-child {
+    justify-content: flex-start !important;
+  }
+
+  #about:target ~ .page .biography .row .col:last-child .bio-text {
+    flex: 0 0 auto;
+    height: 54.97vh;              /* same height as the photo strip on About */
+    padding-top: 0 !important;
+    margin-top: 11.94vh;          /* keeps the top alignment like desktop */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.75rem;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+
+    /* prevent overly narrow lines at ~912px wide */
+    max-width: clamp(320px, 46vw, 560px);
+  }
+
+  #about:target ~ .page .biography .row .col:last-child .contact {
+    margin-top: 2.5vh;
+  }
+}
+
+/* STEP 3K: ABOUT mid-width keep BIOGRAPHY visible + right padding */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  /* Add breathing room on the right for the whole biography area */
+  #about:target ~ .page .biography {
+    padding-right: 4.3vw;
+  }
+
+  /* Make sure the big BIOGRAPHY title doesn't get pushed off-screen */
+  #about:target ~ .page .biography .row .col:first-child {
+    padding-bottom: 8vh; /* reduce bottom padding that can push title down */
+  }
+
+  /* keep the title anchored toward the bottom but not disappearing */
+  #about:target ~ .page .biography .row .col:first-child h1 {
+    margin-bottom: 0;
+  }
+}
+
+/* STEP LIB1: replace album covers with play/pause buttons */
+body .library .tracks .track .icon::after {
+  content: none !important;
+}
+
+body .library .tracks .track .icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+body .library .tracks .track .play-btn {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 0;
+}
+
+body .library .tracks .track .play-btn img {
+  display: block;
+  width: clamp(18px, 2.08vw, 32px);
+  height: auto;
+}
+
+/* STEP 4B: library play/pause button sizing */
+body .library .tracks .track .play-btn {
+  width: 2.2vh;
+  height: 2.2vh;
+}
+
+body .library .tracks .track .play-btn img {
+  width: 100%;
+  height: 100%;
+  image-rendering: auto;
+}
+
+/* STEP 5: mobile burger overlay + mid-width no burger */
+
+/* Mid-sized screens (>=768px and <992px): show the top links like desktop, hide burger */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  body header .navbar-toggler {
+    display: none !important;
+  }
+  body header .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto !important;
+    height: auto !important;
+    visibility: visible !important;
+  }
+  body header .navbar-collapse.collapse:not(.show) {
+    display: flex !important;
+  }
+  body header .navbar-collapse.collapsing {
+    display: flex !important;
+    height: auto !important;
+  }
+}
+
+/* Mobile (<=767px): fullscreen blurred overlay menu */
+@media (max-width: 767.98px) {
+  /* keep header items above the blur layer */
+  body header {
+    position: relative;
+    z-index: 1202;
+  }
+
+  /* burger button: no frame, stable size */
+  body header .navbar-toggler {
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1203;
+  }
+  body header .navbar-toggler:focus {
+    box-shadow: none !important;
+  }
+  body header .navbar-toggler .navbar-toggler-icon {
+    width: 24px;
+    height: 18px;
+    background-size: 24px 18px;
+  }
+
+  /* turn burger into X when open */
+  body header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    background-image: none;
+    position: relative;
+  }
+  body header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before,
+  body header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    background: #fff;
+    transform-origin: center;
+  }
+  body header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+    transform: translateY(-50%) rotate(45deg);
+  }
+  body header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+    transform: translateY(-50%) rotate(-45deg);
+  }
+
+  /* the blurred fullscreen menu (Bootstrap collapse open state) */
+  body header .navbar-collapse.show,
+  body header .navbar-collapse.collapsing {
+    position: fixed;
+    inset: 0;
+    z-index: 1201;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: rgba(67, 67, 67, 0.72);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  /* prevent odd "slide from corner" collapse animation */
+  body header .navbar-collapse.collapsing {
+    height: 100vh !important;
+    transition: none !important;
+  }
+  body header .navbar-collapse.show {
+    height: 100vh !important;
+  }
+
+  body header .navbar-collapse.show .row.w-100,
+  body header .navbar-collapse.collapsing .row.w-100 {
+    width: auto !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3.2vh;
+    text-align: center;
+  }
+
+  body header .navbar-collapse.show .row.w-100 .col-6,
+  body header .navbar-collapse.collapsing .row.w-100 .col-6 {
+    width: auto;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  body header .navbar-collapse.show a.nav-link,
+  body header .navbar-collapse.collapsing a.nav-link {
+    text-transform: lowercase;
+    font-size: 3.2vh;
+    line-height: 1.05;
+  }
+}
