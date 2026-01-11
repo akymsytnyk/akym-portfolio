@@ -889,3 +889,28 @@ body .library .tracks .track .play-btn img {
     }
   }
 }
+
+/* STEP MOBILE FIX 3: bottom-safe + library title */
+@media (max-width: 767.98px) {
+  /* Push content up so bottom text never sits under Chrome's bottom UI */
+  body main {
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+
+  /* Home screen: remove bottom margin and replace with internal padding */
+  body .home-row {
+    margin: 0 24px 0 24px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+
+  /* About screen: give contact area bottom breathing room */
+  #about:target ~ .page .biography {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+
+  /* Library title: reduce size so "LIBRARY" is fully visible on phones */
+  body .library .lib-title {
+    font-size: clamp(56px, 11vh, 96px);
+    max-width: 100%;
+  }
+}
