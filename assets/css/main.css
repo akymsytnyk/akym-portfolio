@@ -851,66 +851,50 @@ body .library .tracks .track .play-btn img {
   }
 }
 
-/* MOBILE CHROME: keep header/footer out of browser bars (no whole-page scroll) */
+/* STEP MOBILE FIX 4: iOS/Chrome visible viewport height */
 @media (max-width: 767.98px) {
-
-  /* Prevent page-level scrolling */
+  /* Lock the page to the *visible* viewport. JS sets --app-height using visualViewport/innerHeight. */
   html, body {
     height: 100%;
     overflow: hidden;
     overscroll-behavior-y: none;
   }
 
-  /* Size the app to the *visible* viewport (svh fixes Chrome mobile UI bars) */
   body .page {
-    height: 100vh;
-    min-height: 100vh;
+    height: var(--app-height, 100vh);
+    min-height: var(--app-height, 100vh);
     overflow: hidden;
   }
 
-  @supports (height: 100svh) {
-    body .page {
-      height: 100svh;
-      min-height: 100svh;
-    }
-  }
-
-  /* Make sure About uses the same sizing */
+  /* About target also uses the same height (it previously used 100dvh/100vh) */
   #about:target ~ .page {
-    height: 100vh;
-    min-height: 100vh;
+    height: var(--app-height, 100vh);
+    min-height: var(--app-height, 100vh);
     overflow: hidden;
   }
 
-  @supports (height: 100svh) {
-    #about:target ~ .page {
-      height: 100svh;
-      min-height: 100svh;
-    }
-  }
-}
-
-/* STEP MOBILE FIX 3: bottom-safe + library title */
-@media (max-width: 767.98px) {
-  /* Push content up so bottom text never sits under Chrome's bottom UI */
-  body main {
-    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  /* Keep bottom content above phone UI */
+  body header {
+    padding-top: calc(16px + env(safe-area-inset-top)) !important;
   }
 
-  /* Home screen: remove bottom margin and replace with internal padding */
   body .home-row {
-    margin: 0 24px 0 24px;
+    margin-bottom: 0 !important;
     padding-bottom: calc(24px + env(safe-area-inset-bottom));
   }
 
-  /* About screen: give contact area bottom breathing room */
   #about:target ~ .page .biography {
-    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
   }
 
-  /* Library title: reduce size so "LIBRARY" is fully visible on phones */
+  /* Library overlay should also fit the visible viewport */
+  body .library {
+    max-height: var(--app-height, 100vh);
+  }
+
+  /* Library title: reduce so the full word fits on phones */
   body .library .lib-title {
     font-size: clamp(56px, 11vh, 96px);
-    max-width: 100%;
+    line-height: 0.9;
   }
 }
