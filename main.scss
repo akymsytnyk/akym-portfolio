@@ -811,3 +811,36 @@ body .library .tracks .track .play-btn img {
     line-height: 1.05;
   }
 }
+
+/* STEP MOBILE FIX: lock viewport + safe areas (HOME + ABOUT) */
+@media (max-width: 767.98px) {
+  /* Stop scrolling the whole page on mobile */
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    overscroll-behavior: none;
+  }
+
+  body .page {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* Respect phone safe-areas (notch + home indicator) */
+  body header {
+    padding-top: calc(16px + env(safe-area-inset-top)) !important;
+  }
+
+  body .home-row {
+    margin: 0 24px calc(48px + env(safe-area-inset-bottom)) 24px;
+  }
+
+  /* Keep ABOUT contact comfortably above the home indicator */
+  #about:target ~ .page .biography {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
