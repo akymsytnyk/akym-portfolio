@@ -859,3 +859,22 @@ body .library .tracks .track .play-btn img {
     line-height: 0.9;
   }
 }
+
+/* STEP MOBILE FIX 5: use Library-like bottom safety for HOME + ABOUT (iPhone Chrome) */
+@media (max-width: 767.98px){
+  /* Give every page a bottom buffer so content never sits under the bottom browser bar */
+  body main{
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  /* HOME: keep AKYM/SYTNYK and subtitle fully above the bottom bar */
+  body .home-row{
+    margin-bottom: 0 !important;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  /* ABOUT: keep Contact fully visible above the bottom bar */
+  #about:target ~ .page .biography{
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+}
