@@ -812,35 +812,41 @@ body .library .tracks .track .play-btn img {
   }
 }
 
-/* STEP MOBILE FIX: lock viewport + safe areas (HOME + ABOUT) */
+/* MOBILE CHROME: keep header/footer out of browser bars (no whole-page scroll) */
 @media (max-width: 767.98px) {
-  /* Stop scrolling the whole page on mobile */
+
+  /* Prevent page-level scrolling */
   html, body {
     height: 100%;
     overflow: hidden;
+    overscroll-behavior-y: none;
   }
 
-  body {
-    overscroll-behavior: none;
-  }
-
+  /* Size the app to the *visible* viewport (svh fixes Chrome mobile UI bars) */
   body .page {
-    height: 100dvh;
-    min-height: 100dvh;
+    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
   }
 
-  /* Respect phone safe-areas (notch + home indicator) */
-  body header {
-    padding-top: calc(16px + env(safe-area-inset-top)) !important;
+  @supports (height: 100svh) {
+    body .page {
+      height: 100svh;
+      min-height: 100svh;
+    }
   }
 
-  body .home-row {
-    margin: 0 24px calc(48px + env(safe-area-inset-bottom)) 24px;
+  /* Make sure About uses the same sizing */
+  #about:target ~ .page {
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
   }
 
-  /* Keep ABOUT contact comfortably above the home indicator */
-  #about:target ~ .page .biography {
-    padding-bottom: env(safe-area-inset-bottom);
+  @supports (height: 100svh) {
+    #about:target ~ .page {
+      height: 100svh;
+      min-height: 100svh;
+    }
   }
 }
