@@ -954,3 +954,41 @@ body .library .tracks .track .play-btn img {
     font-size: 16px;
   }
 }
+
+/* STEP MOBILE ABOUT 8: keep Contact pinned, scroll content under it */
+@media (max-width: 767.98px) {
+  /* About mobile: scroll the RIGHT column; keep Contact always visible */
+  #about:target ~ .page .biography {
+    overflow: hidden;
+  }
+
+  /* Make the right column the scroll container */
+  #about:target ~ .page .biography .row > .col:last-child {
+    height: 100%;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0.75rem; /* room for scrollbar */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Disable the inner scroll window on mobile so content can flow under Contact */
+  #about:target ~ .page .biography .row > .col:last-child .bio-text {
+    overflow: visible !important;
+    flex: 0 0 auto !important;
+    min-height: auto !important;
+    padding-right: 0 !important;
+  }
+
+  /* Pin Contact to the bottom of the visible area */
+  #about:target ~ .page .biography .row > .col:last-child .contact {
+    position: sticky !important;
+    bottom: 0;
+    margin-top: 12px !important;
+    padding-top: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    background: #434343; /* same grey background */
+    z-index: 2;
+  }
+}
