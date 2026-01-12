@@ -953,3 +953,36 @@ body .library .tracks .track .play-btn img {
     z-index: 2;
   }
 }
+
+/* STEP MOBILE ABOUT MASK: hide bio under Contact */
+@media (max-width: 767.98px) {
+  /* Ensure Contact covers anything scrolling behind it */
+  #about:target ~ .page .biography .row > .col:last-child .contact {
+    position: relative;
+    z-index: 2;
+    background: #434343; /* same grey as the page */
+  }
+
+  /* Bio stays underneath Contact */
+  #about:target ~ .page .biography .row > .col:last-child .bio-text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* MOBILE ABOUT: make Contact an opaque mask to the very bottom (hide bio text behind) */
+@media (max-width: 767.98px){
+  #about:target ~ .page .biography .row > .col:last-child .contact{
+    position: relative;
+    z-index: 5;
+    background: #434343;
+
+    /* Extends the grey background below the Contact box without moving its text */
+    box-shadow: 0 100vh 0 100vh #434343;
+  }
+
+  #about:target ~ .page .biography .row > .col:last-child .bio-text{
+    position: relative;
+    z-index: 1;
+  }
+}
