@@ -811,3 +811,213 @@ body .library .tracks .track .play-btn img {
     line-height: 1.05;
   }
 }
+
+/* STEP MOBILE FIX 4: iOS/Chrome visible viewport height */
+@media (max-width: 767.98px) {
+  /* Lock the page to the *visible* viewport. JS sets --app-height using visualViewport/innerHeight. */
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior-y: none;
+  }
+
+  body .page {
+    height: var(--app-height, 100vh);
+    min-height: var(--app-height, 100vh);
+    overflow: hidden;
+  }
+
+  /* About target also uses the same height (it previously used 100dvh/100vh) */
+  #about:target ~ .page {
+    height: var(--app-height, 100vh);
+    min-height: var(--app-height, 100vh);
+    overflow: hidden;
+  }
+
+  /* Keep bottom content above phone UI */
+  body header {
+    padding-top: calc(16px + env(safe-area-inset-top)) !important;
+  }
+
+  body .home-row {
+    margin-bottom: 0 !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+
+  #about:target ~ .page .biography {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  /* Library overlay should also fit the visible viewport */
+  body .library {
+    max-height: var(--app-height, 100vh);
+  }
+
+  /* Library title: reduce so the full word fits on phones */
+  body .library .lib-title {
+    font-size: clamp(56px, 11vh, 96px);
+    line-height: 0.9;
+  }
+}
+
+/* STEP MOBILE FIX 5: use Library-like bottom safety for HOME + ABOUT (iPhone Chrome) */
+@media (max-width: 767.98px){
+  /* Give every page a bottom buffer so content never sits under the bottom browser bar */
+  body main{
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  /* HOME: keep AKYM/SYTNYK and subtitle fully above the bottom bar */
+  body .home-row{
+    margin-bottom: 0 !important;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  /* ABOUT: keep Contact fully visible above the bottom bar */
+  #about:target ~ .page .biography{
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+}
+
+/* STEP MOBILE ABOUT SIMPLE: use desktop right column layout */
+@media (max-width: 767.98px) {
+  /* About page: show only the desktop "right side" content on grey background */
+  #about:target ~ .page::before {
+    opacity: 0; /* hide the photo layer */
+  }
+
+  /* Hide the left BIOGRAPHY column (desktop left side) */
+  #about:target ~ .page .biography .row > .col:first-child {
+    display: none !important;
+  }
+
+  /* Make the right column behave like the desktop right side (full width on mobile) */
+  #about:target ~ .page .biography .row > .col:last-child {
+    width: 100% !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+
+  /* Keep the typography/spacing from the existing mobile rules (avoid overly wide feel) */
+  #about:target ~ .page .biography {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  #about:target ~ .page .biography .row {
+    flex-direction: row !important; /* one column visible, so keep it simple */
+    gap: 0 !important;
+  }
+
+  #about:target ~ .page .biography .row > .col:last-child .bio-text {
+    max-width: 100% !important;
+    padding-top: 0 !important;
+    font-size: 16px;
+  }
+}
+
+/* STEP MOBILE ABOUT 8: keep Contact pinned, scroll content under it */
+@media (max-width: 767.98px) {
+  /* About mobile: scroll the RIGHT column; keep Contact always visible */
+  #about:target ~ .page .biography {
+    overflow: hidden;
+  }
+
+  /* Make the right column the scroll container */
+  #about:target ~ .page .biography .row > .col:last-child {
+    height: 100%;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0.75rem; /* room for scrollbar */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Disable the inner scroll window on mobile so content can flow under Contact */
+  #about:target ~ .page .biography .row > .col:last-child .bio-text {
+    overflow: visible !important;
+    flex: 0 0 auto !important;
+    min-height: auto !important;
+    padding-right: 0 !important;
+  }
+
+  /* Pin Contact to the bottom of the visible area */
+  #about:target ~ .page .biography .row > .col:last-child .contact {
+    position: sticky !important;
+    bottom: 0;
+    margin-top: 12px !important;
+    padding-top: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    background: #434343; /* same grey background */
+    z-index: 2;
+  }
+}
+
+/* STEP MOBILE ABOUT MASK: hide bio under Contact */
+@media (max-width: 767.98px) {
+  /* Ensure Contact covers anything scrolling behind it */
+  #about:target ~ .page .biography .row > .col:last-child .contact {
+    position: relative;
+    z-index: 2;
+    background: #434343; /* same grey as the page */
+  }
+
+  /* Bio stays underneath Contact */
+  #about:target ~ .page .biography .row > .col:last-child .bio-text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* MOBILE ABOUT: make Contact an opaque mask to the very bottom (hide bio text behind) */
+@media (max-width: 767.98px){
+  #about:target ~ .page .biography .row > .col:last-child .contact{
+    position: relative;
+    z-index: 5;
+    background: #434343;
+
+    /* Extends the grey background below the Contact box without moving its text */
+    box-shadow: 0 100vh 0 100vh #434343;
+  }
+
+  #about:target ~ .page .biography .row > .col:last-child .bio-text{
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* STEP HOME MOBILE: keep social icons above bottom bar (align with title) */
+@media (max-width: 767.98px) {
+  /* Put social icons to the right of the name (prevents them from sitting under the bottom browser bar) */
+  body .home-row {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "title social"
+      "about about";
+    column-gap: 16px;
+    row-gap: 16px;
+    align-items: end;
+  }
+
+  body .home-row > .col.p-0 {
+    grid-area: title;
+  }
+
+  body .home-row > .col.about {
+    grid-area: about;
+  }
+
+  body .home-row > .col.social {
+    grid-area: social;
+    align-self: end;
+    text-align: right !important;
+  }
+
+  /* Keep the same icon sizing, just avoid wrapping issues */
+  body .home-row .social ul {
+    flex-direction: row;
+    gap: 12px;
+  }
+}
