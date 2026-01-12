@@ -986,38 +986,3 @@ body .library .tracks .track .play-btn img {
     z-index: 1;
   }
 }
-
-/* STEP HOME MOBILE: keep social icons above bottom bar (align with title) */
-@media (max-width: 767.98px) {
-  /* Put social icons to the right of the name (prevents them from sitting under the bottom browser bar) */
-  body .home-row {
-    display: grid !important;
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      "title social"
-      "about about";
-    column-gap: 16px;
-    row-gap: 16px;
-    align-items: end;
-  }
-
-  body .home-row > .col.p-0 {
-    grid-area: title;
-  }
-
-  body .home-row > .col.about {
-    grid-area: about;
-  }
-
-  body .home-row > .col.social {
-    grid-area: social;
-    align-self: end;
-    text-align: right !important;
-  }
-
-  /* Keep the same icon sizing, just avoid wrapping issues */
-  body .home-row .social ul {
-    flex-direction: row;
-    gap: 12px;
-  }
-}
