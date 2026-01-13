@@ -321,18 +321,8 @@
         
         </script>
         <script>
+            
             document.addEventListener('DOMContentLoaded', () => {
-              const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-              let audioCtx = null;
-            
-              // Decode sequentially (prevents multiple huge WAV decodes at once)
-              let decodeQueue = Promise.resolve();
-            
-              function getAudioCtx() {
-                if (!audioCtx) audioCtx = new AudioContextClass();
-                return audioCtx;
-              }
-            
               document.querySelectorAll('.tracks audio').forEach((audio) => {
                 const container = audio.parentElement;
             
@@ -347,8 +337,6 @@
                 const maxHeight = 35;
             
                 let waveformData = null;
-                let waveformReady = false;
-                let waveformLoading = false;
             
                 function calcLayout(width, bars) {
                   let bw = barWidth;
@@ -358,9 +346,9 @@
             
                   let total = bars * bw + (bars - 1) * sp;
             
-                  // If the fixed layout doesn't fit, shrink bars+gaps so everything is visible
                   if (total > width && bars > 1) {
-                    const unit = width / (2 * bars - 1); // bar + gap, 1:1 ratio
+                    // Fit all bars into available width (bar:gap ratio 1:1)
+                    const unit = width / (2 * bars - 1);
                     bw = Math.max(1, unit);
                     sp = bw;
                     total = bars * bw + (bars - 1) * sp;
@@ -425,68 +413,39 @@
                   }
                 }
             
-                // Placeholder waveform: instant UI, no WAV download on Library open
+                // Quick placeholder so UI is immediate
                 const placeholderBars = 64;
                 waveformData = Array.from({ length: placeholderBars }, (_, i) => 0.35 + 0.15 * Math.sin(i / 3));
                 drawWave(0);
             
-                function computeWaveform(decoded) {
-                  const channelData = decoded.getChannelData(0);
-                  const segments = 64;
-                  const blockSize = Math.max(1, Math.floor(channelData.length / segments));
+                async function loadWaveformJSON() {
+                  try {
+                    const src = audio.querySelector('source')?.getAttribute('src') || audio.getAttribute('src') || '';
+                    const file = src.split('/').pop().replace(/\.wav($|\?)/i, '');
+                    const jsonPath = `assets/waveforms/${file}.json`;
             
-                  const amplitudes = new Array(segments);
+                    const res = await fetch(jsonPath, { cache: 'force-cache' });
+                    if (!res.ok) throw new Error('waveform json missing');
+                    const obj = await res.json();
+                    if (!obj || !Array.isArray(obj.data)) throw new Error('bad waveform json');
             
-                  for (let i = 0; i < segments; i++) {
-                    let sum = 0;
-                    const start = i * blockSize;
-                    const end = Math.min(start + blockSize, channelData.length);
-                    for (let j = start; j < end; j++) sum += Math.abs(channelData[j]);
-                    amplitudes[i] = sum / Math.max(1, (end - start));
+                    waveformData = obj.data;
+                    const p = audio.duration ? (audio.currentTime / audio.duration) : 0;
+                    drawWave(p);
+                  } catch (e) {
+                    // Keep placeholder if JSON not found
+                    console.warn('Waveform JSON load failed; keeping placeholder', e);
                   }
-            
-                  const maxVal = Math.max(...amplitudes) || 1;
-                  waveformData = amplitudes.map((v) => v / maxVal);
-                  waveformReady = true;
-            
-                  const progress = audio.duration ? audio.currentTime / audio.duration : 0;
-                  drawWave(progress);
                 }
             
-                function ensureWaveform() {
-                  if (waveformReady || waveformLoading) return;
-                  waveformLoading = true;
-            
-                  decodeQueue = decodeQueue.then(async () => {
-                    try {
-                      const ctxAudio = getAudioCtx();
-                      if (ctxAudio.state === 'suspended') {
-                        try { await ctxAudio.resume(); } catch (e) {}
-                      }
-            
-                      const src = audio.querySelector('source')?.src || audio.src;
-                      const res = await fetch(src, { cache: 'force-cache' });
-                      if (!res.ok) throw new Error('Failed to fetch audio');
-            
-                      const buf = await res.arrayBuffer();
-                      const decoded = await ctxAudio.decodeAudioData(buf);
-                      computeWaveform(decoded);
-                    } catch (err) {
-                      console.warn('Waveform generation failed; keeping placeholder', err);
-                    } finally {
-                      waveformLoading = false;
-                    }
-                  });
-                }
-            
-                // Decode only when the user actually plays this track (fast initial load)
-                audio.addEventListener('play', ensureWaveform);
+                // Load JSON immediately (tiny file, fast)
+                loadWaveformJSON();
             
                 audio.addEventListener('timeupdate', () => {
                   if (audio.duration) drawWave(audio.currentTime / audio.duration);
                 });
             
-                // Seeking logic (works with placeholder or real waveform)
+                // Seeking (works with placeholder or JSON)
                 let seeking = false;
                 let activePointerId = null;
             
@@ -561,7 +520,6 @@
                   canvas.addEventListener('touchcancel', endSeek);
                 }
             
-                // Redraw when container width changes (prevents partial waveform on mobile)
                 if ('ResizeObserver' in window) {
                   const ro = new ResizeObserver(() => {
                     const p = audio.duration ? audio.currentTime / audio.duration : 0;
