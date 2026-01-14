@@ -334,35 +334,6 @@
                     const spacing = 4;
                     const barWidth = 4;
                     const maxHeight = 35;
-                    // Placeholder waveform + loading sweep while waveform data loads
-                    const wfSegments = 64;
-                    const placeholderData = Array.from({ length: wfSegments }, (_, i) => 0.35 + 0.15 * Math.sin(i / 3));
-                    waveformData = placeholderData;
-
-                    let loading = true;
-                    let loadingRAF = null;
-                    const loadingStart = performance.now();
-
-                    function stopLoading() {
-                        loading = false;
-                        if (loadingRAF !== null) {
-                            cancelAnimationFrame(loadingRAF);
-                            loadingRAF = null;
-                        }
-                    }
-
-                    function startLoadingSweep() {
-                        if (!loading) return;
-                        const t = (performance.now() - loadingStart) / 1000;
-                        drawWave(t % 1);
-                        if (!loading) return;
-                        loadingRAF = requestAnimationFrame(startLoadingSweep);
-                    }
-
-                    // Start sweep until audio starts playing or real waveform is ready
-                    startLoadingSweep();
-                    audio.addEventListener('play', stopLoading);
-
                     function calcLayout(width, bars) {
                         let bw = barWidth;
                         let sp = spacing;
@@ -443,11 +414,9 @@
                             }
                             const maxVal = Math.max(...amplitudes) || 1;
                             waveformData = amplitudes.map((v) => v / maxVal);
-                            stopLoading();
                             drawWave(0);
                         })
                         .catch((err) => {
-                            stopLoading();
                             console.warn('Waveform generation failed; using placeholder data', err);
                             const segments = 64;
                             waveformData = Array.from({ length: segments }, () => Math.random() * 0.5 + 0.5);
