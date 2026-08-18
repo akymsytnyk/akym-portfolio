@@ -225,6 +225,12 @@ body .library:target .tracks li {
 body .biography {
   display: none;
 }
+/* Mobile-only heading (see STEP MOBILE STACKED) — hidden by default
+   since desktop/tablet's About already has its own "BIOGRAPHY"
+   heading in the left column. */
+body .about-title {
+  display: none;
+}
 body .home {
   display: none;
 }
@@ -338,17 +344,6 @@ body .page {
 }
 
 @media (max-width: 767.98px) {
-  /* Keep the hero photo cropped (not stretched) on small screens */
-  body .page::before {
-    background-size: cover;
-    background-position: 22% 18%;
-  }
-
-  #about:target ~ .page::before {
-    background-size: cover;
-    background-position: 22% 18%;
-  }
-
   body header {
     padding: 16px 16px !important;
     font-size: 16px !important;
@@ -451,9 +446,12 @@ body .page {
 }
 
 @media (max-width: 479.98px) {
-  /* Slightly re-center the crop on very small screens */
-  body .page::before,
-  #about:target ~ .page::before {
+  /* Slightly re-center the hero photo crop on very small screens.
+     Matches the home-row margin below (12px), so the photo layer
+     (which negates that margin to stay full-bleed) lines up. */
+  body .home-row::before {
+    left: -12px;
+    right: -12px;
     background-position: 20% 16%;
   }
 
@@ -863,9 +861,12 @@ body .library .tracks .track .play-btn img {
     padding-bottom: calc(24px + env(safe-area-inset-bottom));
   }
 
-  /* Library title: reduce so the full word fits on phones */
+  /* Library title: reduce so the full word fits on phones. Sized off
+     viewport WIDTH (not height) so it doesn't recalculate — and
+     visibly jump in size — every time the browser's address bar
+     shows/hides while scrolling. */
   body .library .lib-title {
-    font-size: clamp(56px, 11vh, 96px);
+    font-size: clamp(48px, 21vw, 84px);
     line-height: 0.9;
   }
 }
@@ -930,6 +931,53 @@ body .library .tracks .track .play-btn img {
    phone widths only, and the desktop/tablet :target-driven overlay
    system above keeps working exactly as before at >=768px. */
 @media (max-width: 767.98px) {
+  /* --- Flat scroll, no parallax: the header is the only thing fixed
+     to the screen. Everything else — photo, text, grey panels — is
+     normal in-flow content that scrolls together as one page, like a
+     PDF, instead of separate layers moving at different rates.
+     !important here because the header also carries Bootstrap's
+     .navbar class, which sets its own position:relative — a single
+     class selector outranks our two-tag "body header" selector on
+     specificity alone, regardless of source order. --- */
+  body header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+  }
+
+  /* The old fixed full-page photo layer is retired on mobile (that's
+     what caused the layered/parallax look). Home gets its own photo
+     background instead — see body .home-row::before below. */
+  body .page::before,
+  #about:target ~ .page::before {
+    display: none;
+  }
+
+  /* --- Home: full first screen, photo scrolls away with it like any
+     other content. Title still anchors toward the bottom, matching
+     today's look; padding-top clears the fixed header above it. --- */
+  body .home-row {
+    position: relative;
+    z-index: 0;
+    min-height: 100svh;
+    padding-top: calc(80px + env(safe-area-inset-top, 0px));
+    align-content: end;
+  }
+
+  body .home-row::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -24px;
+    right: -24px;
+    z-index: -1;
+    background: #434343 url("../img/background.jpg") no-repeat 22% 18%;
+    background-size: cover;
+  }
+
   /* --- Library: always in-flow, right after Home, sized to its own
      content instead of a fixed full-screen panel. --- */
   body .library {
@@ -945,6 +993,18 @@ body .library .tracks .track .play-btn img {
     z-index: auto;
   }
 
+  /* LIBRARY reads as this section's heading, so show it above the
+     tracks instead of below them (DOM order is untouched — this is
+     purely visual, so desktop's reveal animation is unaffected). */
+  body .library .container-fluid > .row:first-child {
+    order: 2;
+  }
+
+  body .library .container-fluid > .row.mt-auto {
+    order: 1;
+    margin-top: 0 !important;
+  }
+
   body .library .lib-title {
     transform: none !important;
   }
@@ -954,10 +1014,6 @@ body .library .tracks .track .play-btn img {
     transform: none;
   }
 
-  body .library .row.mt-auto {
-    margin-top: 32px !important;
-  }
-
   /* There's no overlay to close anymore */
   body .library .close-btn {
     display: none !important;
@@ -965,8 +1021,8 @@ body .library .tracks .track .play-btn img {
 
   /* --- About: always in-flow, right after Library. Same right-column
      look the overlay used to show, with its own opaque background so
-     it covers the fixed hero photo as the page scrolls past it. No
-     inner scroll container — the whole page scrolls instead. --- */
+     it covers the grey Library panel above it. No inner scroll
+     container — the whole page scrolls instead. --- */
   body .biography {
     display: flex !important;
     flex: none !important;
@@ -993,6 +1049,14 @@ body .library .tracks .track .play-btn img {
     justify-content: flex-start !important;
   }
 
+  /* ABOUT ME: a matching heading for this section, same treatment as
+     LIBRARY's title, so it doesn't read as belonging to Library above. */
+  body .biography .about-title {
+    display: block;
+    margin: 24px 0 0 0;
+    font: 500 clamp(48px, 21vw, 84px)/.9 "roc-grotesk-condensed", sans-serif;
+  }
+
   body .biography .row > .col:last-child .bio-text {
     max-width: 100% !important;
     padding-top: 24px !important;
@@ -1012,12 +1076,14 @@ body .library .tracks .track .play-btn img {
     z-index: auto !important;
   }
 
-  /* --- Home: keep today's look (photo behind it, title anchored
-     toward the bottom) within roughly the first screen, so scrolling
-     down into Library feels the same as opening it from the menu
-     does today. --- */
-  body .home-row {
-    min-height: calc(var(--app-height, 100vh) - 80px - env(safe-area-inset-top, 0px));
-    align-content: end;
+  /* Contact icons: the only rule that sized these was scoped to the
+     desktop/tablet #about:target overlay, so on mobile (which no
+     longer relies on that hash) they fell back to each SVG's own
+     intrinsic size — 35px for Instagram vs 18px for mailto, hence the
+     oversized/misaligned look. Size both the same, explicitly. */
+  body .biography .contact-row img {
+    width: clamp(16px, 4.5vw, 20px);
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
 }
