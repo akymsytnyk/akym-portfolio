@@ -1034,6 +1034,13 @@ body .library .tracks .track .play-btn img {
   body .biography .row {
     flex-direction: row !important;
     gap: 0 !important;
+    /* Neutralize Bootstrap's row/col gutter (negative row margin +
+       col padding) so this column's content aligns with .biography's
+       own padding directly — same explicit approach used for
+       .library .row above, instead of relying on the gutter math to
+       happen to cancel out. */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
   body .biography .row > .col:first-child {
@@ -1047,6 +1054,8 @@ body .library .tracks .track .play-btn img {
     min-height: 0 !important;
     overflow: visible !important;
     justify-content: flex-start !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   /* ABOUT ME: a matching heading for this section, same treatment as
@@ -1085,5 +1094,34 @@ body .library .tracks .track .play-btn img {
     width: clamp(16px, 4.5vw, 20px);
     height: auto;
     aspect-ratio: 1 / 1;
+  }
+
+  /* Same story for the row layout itself: icon+handle sitting side by
+     side (and the gap between the two contact methods) was also only
+     ever defined inside the #about:target scope, so on mobile it fell
+     back to plain stacked block elements. Make it unconditional. */
+  body .biography .contact {
+    gap: 16px;
+  }
+
+  body .biography .contact-row {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+  }
+
+  body .biography .contact-row p {
+    margin: 0;
+  }
+}
+
+/* Keep About's left/right inset matching Library's small-screen
+   padding (see the <480px block earlier, and STEP MOBILE STACKED
+   above). This has to come after STEP MOBILE STACKED — that block's
+   own .biography padding rule matches at this width too, and same
+   selector + !important means source order decides the winner. */
+@media (max-width: 479.98px) {
+  body .biography {
+    padding: 0 12px calc(48px + env(safe-area-inset-bottom)) 12px !important;
   }
 }
