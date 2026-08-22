@@ -991,6 +991,11 @@ body .library .tracks .track .play-btn img {
     height: auto;
     overflow: visible;
     z-index: auto;
+    /* Base padding-top is 0 (see "Responsive tweaks" above) — that
+       was fine when tracks led (their own margin-top gave the section
+       breathing room). Now LIBRARY leads, so give the section its own
+       top padding, or the heading sits flush against the grey edge. */
+    padding-top: 32px;
   }
 
   /* LIBRARY reads as this section's heading, so show it above the
@@ -1123,5 +1128,13 @@ body .library .tracks .track .play-btn img {
 @media (max-width: 479.98px) {
   body .biography {
     padding: 0 12px calc(48px + env(safe-area-inset-bottom)) 12px !important;
+  }
+
+  /* Same reasoning for Library's top padding (see STEP MOBILE
+     STACKED's body .library rule) — scale it down at this tier too,
+     matching the 32px->24px reduction already used for its bottom
+     padding at this same breakpoint. */
+  body .library {
+    padding-top: 24px;
   }
 }
