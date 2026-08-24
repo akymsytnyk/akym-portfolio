@@ -931,20 +931,11 @@ body .library .tracks .track .play-btn img {
    phone widths only, and the desktop/tablet :target-driven overlay
    system above keeps working exactly as before at >=768px. */
 @media (max-width: 767.98px) {
-  /* --- Flat scroll, no parallax: the header is the only thing fixed
-     to the screen. Everything else — photo, text, grey panels — is
-     normal in-flow content that scrolls together as one page, like a
-     PDF, instead of separate layers moving at different rates.
-     !important here because the header also carries Bootstrap's
-     .navbar class, which sets its own position:relative — a single
-     class selector outranks our two-tag "body header" selector on
-     specificity alone, regardless of source order. --- */
+  /* --- Flat scroll, no parallax, no nav chrome: the page is just one
+     continuous document — nothing needs to float above it anymore, so
+     the header (HOME link + hamburger menu) is hidden entirely. --- */
   body header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
+    display: none !important;
   }
 
   /* The old fixed full-page photo layer is retired on mobile (that's
@@ -957,12 +948,13 @@ body .library .tracks .track .play-btn img {
 
   /* --- Home: full first screen, photo scrolls away with it like any
      other content. Title still anchors toward the bottom, matching
-     today's look; padding-top clears the fixed header above it. --- */
+     today's look. Only safe-area-inset-top is needed now (no header
+     to clear anymore, just the phone's own notch/status bar). --- */
   body .home-row {
     position: relative;
     z-index: 0;
     min-height: 100svh;
-    padding-top: calc(80px + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
     align-content: end;
   }
 
@@ -995,7 +987,7 @@ body .library .tracks .track .play-btn img {
        was fine when tracks led (their own margin-top gave the section
        breathing room). Now LIBRARY leads, so give the section its own
        top padding, or the heading sits flush against the grey edge. */
-    padding-top: 32px;
+    padding-top: 48px;
   }
 
   /* LIBRARY reads as this section's heading, so show it above the
@@ -1012,6 +1004,15 @@ body .library .tracks .track .play-btn img {
 
   body .library .lib-title {
     transform: none !important;
+    /* .lib-title is a bare child of .row.mt-auto (not wrapped in a
+       .col like About's heading is), so it was inheriting Bootstrap's
+       .row > * gutter padding (12px) meant for grid columns — sitting
+       inside the element and pushing the visible text further right
+       than .library's own padding alone, without showing up as a
+       difference in the element's own box position. Zero it out so
+       .library's padding is the only thing positioning this text. */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   body .library .tracks li {
@@ -1135,6 +1136,6 @@ body .library .tracks .track .play-btn img {
      matching the 32px->24px reduction already used for its bottom
      padding at this same breakpoint. */
   body .library {
-    padding-top: 24px;
+    padding-top: 36px;
   }
 }
