@@ -962,17 +962,24 @@ body .library .tracks .track .play-btn img {
   body .library .container-fluid > .row.mt-auto {
     order: 1;
     margin-top: 0 !important;
+    /* Reset Bootstrap's own gutter variable to 0 on this row, so its
+       ".row > *" child-padding rule computes to 0 regardless of
+       whatever --bs-gutter-x actually resolves to in production
+       (rather than guessing that value and trying to cancel it out
+       after the fact with a fixed override). */
+    --bs-gutter-x: 0;
   }
 
   body .library .lib-title {
     transform: none !important;
-    /* .lib-title is a bare child of .row.mt-auto (not wrapped in a
+    /* Belt-and-suspenders alongside the --bs-gutter-x reset above:
+       .lib-title is a bare child of .row.mt-auto (not wrapped in a
        .col like About's heading is), so it was inheriting Bootstrap's
-       .row > * gutter padding (12px) meant for grid columns — sitting
-       inside the element and pushing the visible text further right
-       than .library's own padding alone, without showing up as a
-       difference in the element's own box position. Zero it out so
-       .library's padding is the only thing positioning this text. */
+       .row > * gutter padding — sitting inside the element and
+       pushing the visible text further right than .library's own
+       padding alone, without showing up as a difference in the
+       element's own box position. */
+    margin-left: 0 !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
@@ -1006,9 +1013,12 @@ body .library .tracks .track .play-btn img {
        col padding) so this column's content aligns with .biography's
        own padding directly — same explicit approach used for
        .library .row above, instead of relying on the gutter math to
-       happen to cancel out. */
+       happen to cancel out. Reset the source variable too (see the
+       matching comment on .library's row) rather than just fighting
+       its computed output. */
     margin-left: 0 !important;
     margin-right: 0 !important;
+    --bs-gutter-x: 0;
   }
 
   body .biography .row > .col:first-child {
