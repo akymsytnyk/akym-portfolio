@@ -932,6 +932,29 @@ body .library .tracks .track .play-btn img {
     background-size: cover;
   }
 
+  /* Darkening gradient over the bottom of the hero photo, so the white
+     tagline and icons stay readable where the white piano keys sit
+     behind them. Same box as the photo layer above (so it spans the
+     full width), sits on top of it (later in tree order, same
+     z-index), and under the text (negative z-index paints below
+     in-flow content). Phones only — this whole block is mobile-scoped. */
+  body .home-row::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: -24px;
+    right: -24px;
+    height: 58%;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.5) 45%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
   /* --- Library: always in-flow, right after Home, sized to its own
      content instead of a fixed full-screen panel. --- */
   body .library {
